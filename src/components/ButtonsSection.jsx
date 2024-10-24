@@ -26,6 +26,8 @@ const ButtonsSection = () => {
         const logs = snapshot.val();
         const logsArray = logs ? Object.values(logs) : [];
         const lastLog = logsArray.length > 0 ? logsArray[logsArray.length - 1] : null;
+
+        console.log(lastLog)
   
         // Nếu log cuối cùng khác với hành động mới, thì thêm log mới
         if (!lastLog || lastLog.action !== (action === 'ON' ? 'Mở rèm' : 'Đóng rèm')) {

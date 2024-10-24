@@ -33,17 +33,27 @@ const History = () => {
     const unsubscribe = onValue(historyRef, (snapshot) => {
       const data = snapshot.val();
       const actions = [];
+      let lastAction = null; // Biến để lưu log trước đó
+
       if (data) {
         // Convert the data from Firebase into a usable array
         for (const key in data) {
           if (data.hasOwnProperty(key)) {
             const timestamp = formatDate(data[key].timestamp); // Chuẩn hóa định dạng timestamp
             const formattedDate = `${String(timestamp.getDate()).padStart(2, '0')}/${String(timestamp.getMonth() + 1).padStart(2, '0')}/${timestamp.getFullYear()} ${String(timestamp.getHours()).padStart(2, '0')}:${String(timestamp.getMinutes()).padStart(2, '0')}`; // Format: dd/mm/yyyy hh:mm
-            actions.push({
+            
+            // Kiểm tra xem log hiện tại có giống log trước đó không
+            const currentAction = {
               action: data[key].action,
-              timestamp: formattedDate, // Use the new formatted date
+              timestamp: formattedDate,
               originalDate: data[key].timestamp // Store the original timestamp for filtering
-            });
+            };
+
+            if (!lastAction || lastAction.action !== currentAction.action || lastAction.timestamp !== currentAction.timestamp) {
+              // Nếu khác log trước đó, thêm vào mảng
+              actions.push(currentAction);
+              lastAction = currentAction; // Cập nhật log trước đó
+            }
           }
         }
         setHistoryData(actions.reverse()); // Reverse the array for most recent actions first
