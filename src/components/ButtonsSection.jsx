@@ -156,18 +156,19 @@ const ButtonsSection = () => {
                 className="mb-2"
               />
               <Form.Range
-                value={lightIntensity}
-                onChange={(e) => {
-                  const newLightIntensity = e.target.value;
-                  setLightIntensity(newLightIntensity);
-                  updateFirebase('LIGHT', newLightIntensity);
-                }}
-                min={0}
-                max={100}
-              />
-              <div className="text-center mt-2">
-                <span>Cường độ ánh sáng: {lightIntensity}%</span>
-              </div>
+              value={lightIntensity}
+              onChange={(e) => {
+                const newLightIntensity = e.target.value;
+                setLightIntensity(newLightIntensity);
+                updateFirebase('LIGHT', newLightIntensity);
+              }}
+              min={0}
+              max={1200} // Đặt max thành 1200
+            />
+            <div className="text-center mt-2">
+              <span>Cường độ ánh sáng: {lightIntensity}</span> {/* Đổi đơn vị hiển thị thành lux cho phù hợp */}
+            </div>
+
             </Card.Body>
           </Card>
         </div>
