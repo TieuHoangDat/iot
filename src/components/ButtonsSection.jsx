@@ -16,14 +16,29 @@ const ButtonsSection = () => {
   };
 
   const logRemAction = (action) => {
-    // const dbRef = ref(database, 'rem_actions');
-    const newActionRef = ref(database, `rem_actions/${Date.now()}`);
-
-    set(newActionRef, {
-      action: action === 'ON' ? 'Mở rèm' : 'Đóng rèm',
-      timestamp: new Date().toLocaleString()
-    });
+    // Tạo reference tới log trước đó
+    const remActionsRef = ref(database, 'rem_actions');
+  
+    // Thêm delay 1 giây trước khi kiểm tra log cuối cùng
+    setTimeout(() => {
+      // Lấy log cuối cùng trước khi thêm log mới
+      onValue(remActionsRef, (snapshot) => {
+        const logs = snapshot.val();
+        const logsArray = logs ? Object.values(logs) : [];
+        const lastLog = logsArray.length > 0 ? logsArray[logsArray.length - 1] : null;
+  
+        // Nếu log cuối cùng khác với hành động mới, thì thêm log mới
+        if (!lastLog || lastLog.action !== (action === 'ON' ? 'Mở rèm' : 'Đóng rèm')) {
+          const newActionRef = ref(database, `rem_actions/${Date.now()}`);
+          set(newActionRef, {
+            action: action === 'ON' ? 'Mở rèm' : 'Đóng rèm',
+            timestamp: new Date().toLocaleString(),
+          });
+        }
+      }, { onlyOnce: true });
+    }, 1000); // Delay 1 giây (1000ms)
   };
+  
 
   useEffect(() => {
     const lightRef = ref(database, 'LIGHT');
