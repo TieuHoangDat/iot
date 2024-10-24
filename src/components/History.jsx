@@ -7,6 +7,25 @@ const History = () => {
   const [filterAction, setFilterAction] = useState('all'); // Default action filter
   const [filterDate, setFilterDate] = useState(''); // Default date filter
 
+  // Hàm để chuẩn hóa định dạng ngày/tháng/năm và giờ/phút
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+
+    // Nếu không parse được, kiểm tra xem có định dạng dd/mm/yyyy hh:mm:ss không
+    if (isNaN(date)) {
+      const parts = timestamp.split(' ');
+      const timePart = parts[0];
+      const datePart = parts[1];
+      
+      const [day, month, year] = datePart.split('/').map(Number);
+      const [hours, minutes, seconds] = timePart.split(':').map(Number);
+
+      const correctedDate = new Date(year, month - 1, day, hours, minutes, seconds);
+      return correctedDate;
+    }
+    return date;
+  };
+
   // Function to fetch data from Firebase
   useEffect(() => {
     const historyRef = ref(database, 'rem_actions'); // Reference to the 'rem_actions' node in Firebase
@@ -18,8 +37,7 @@ const History = () => {
         // Convert the data from Firebase into a usable array
         for (const key in data) {
           if (data.hasOwnProperty(key)) {
-            // Convert date format from mm/dd/yyyy to dd/mm/yyyy
-            const timestamp = new Date(data[key].timestamp);
+            const timestamp = formatDate(data[key].timestamp); // Chuẩn hóa định dạng timestamp
             const formattedDate = `${String(timestamp.getDate()).padStart(2, '0')}/${String(timestamp.getMonth() + 1).padStart(2, '0')}/${timestamp.getFullYear()} ${String(timestamp.getHours()).padStart(2, '0')}:${String(timestamp.getMinutes()).padStart(2, '0')}`; // Format: dd/mm/yyyy hh:mm
             actions.push({
               action: data[key].action,
