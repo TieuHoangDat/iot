@@ -29,9 +29,9 @@ const VoiceRecorder = ({ onChangeRemState }) => {
         setIsRecording(false);
 
         // Kiểm tra lệnh và gọi hàm thay đổi trạng thái rèm
-        if (transcriptResult.includes('đóng rèm')) {
+        if (transcriptResult.includes('khoá cửa')) {
           onChangeRemState('OFF');
-        } else if (transcriptResult.includes('mở rèm')) {
+        } else if (transcriptResult.includes('mở cửa')) {
           onChangeRemState('ON');
         }
       };

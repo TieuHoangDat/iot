@@ -16,12 +16,12 @@ const Sidebar = () => {
     <div className="p-3 border-end vh-100 bg-white">
       <div className="text-center mb-4">
         <img
-          src="logo192.png" // Thay bằng đường dẫn hình ảnh của người dùng
+          src="111.png" // Thay bằng đường dẫn hình ảnh của người dùng
           alt="User"
           className="rounded-circle mb-2 shadow"
           width="80"
         />
-        <h5 className="mt-2">Hello 👋</h5>
+        <h5 className="mt-2">Nhóm 16 👋</h5>
         <p className="text-muted">{username || 'Người dùng'}</p> {/* Hiển thị tên người dùng */}
       </div>
 
@@ -32,8 +32,8 @@ const Sidebar = () => {
         <ListGroupItem action href="/diagram" className="py-3">
           <i className="bi bi-bar-chart-fill me-2"></i> Biểu đồ
         </ListGroupItem>
-        <ListGroupItem action href="#recommends" className="py-3">
-          <i className="bi bi-stars me-2"></i> Hướng dẫn
+        <ListGroupItem action href="/cam" className="py-3">
+          <i className="bi bi-stars me-2"></i> Camera
         </ListGroupItem>
         <ListGroupItem action href="#profile" className="py-3">
           <i className="bi bi-person-fill me-2"></i> Thông tin tài khoản

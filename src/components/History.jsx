@@ -110,7 +110,7 @@ const History = () => {
         <ListGroup>
           {filteredData.map((item, index) => (
             <ListGroupItem key={index}>
-              <span className={item.action.includes('Đóng') ? "text-danger" : "text-success"}>●</span>
+              <span className={item.action.includes('Khoá') ? "text-danger" : "text-success"}>●</span>
               {item.action} - {item.timestamp}
             </ListGroupItem>
           ))}
