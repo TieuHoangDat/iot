@@ -16,7 +16,7 @@ const Diagram = () => {
         backgroundColor: 'rgba(75, 192, 192, 0.6)', // Màu nền cho cột
       },
       {
-        label: 'Tần suất đóng cửa',
+        label: 'Tần suất khoá cửa',
         data: [],
         backgroundColor: 'rgba(255, 99, 132, 0.6)', // Màu nền cho cột
       }

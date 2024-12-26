@@ -21,7 +21,7 @@ const Sidebar = () => {
           className="rounded-circle mb-2 shadow"
           width="80"
         />
-        <h5 className="mt-2">Nhóm 16 👋</h5>
+        <h5 className="mt-2">Nhóm 14 👋</h5>
         <p className="text-muted">{username || 'Người dùng'}</p> {/* Hiển thị tên người dùng */}
       </div>
 

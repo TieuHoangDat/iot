@@ -92,7 +92,13 @@ const ButtonsSection = () => {
   };
 
   const handleChangeTmpPassword = () => {
-    const newTmpPassword = Math.floor(1000 + Math.random() * 9000).toString();
+    let newTmpPassword = '';
+    const allowedDigits = ['0', '1', '2', '4', '5', '7', '8']; // Loại bỏ 3, 6, 9
+
+    for (let i = 0; i < 4; i++) {
+        const randomIndex = Math.floor(Math.random() * allowedDigits.length);
+        newTmpPassword += allowedDigits[randomIndex];
+    }
   
     // Lấy thời gian hiện tại cộng thêm 24 giờ
     const newTime = new Date(Date.now() + 24 * 60 * 60 * 1000);

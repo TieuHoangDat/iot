@@ -69,7 +69,7 @@ const VoiceRecorder = ({ onChangeRemState }) => {
   return (
     <Card className="p-3 bg-white shadow-sm mt-4">
       <Card.Body>
-        <h4 className="mb-3">Điều khiển rèm bằng giọng nói</h4>
+        <h4 className="mb-3">Điều khiển cửa bằng giọng nói</h4>
         <div className="d-flex justify-content-between">
           <button
             onClick={startRecording}

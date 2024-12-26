@@ -68,7 +68,7 @@ const History = () => {
   // Filter history data based on selected filters
   const filteredData = historyData.filter(item => {
     // Filter by action
-    const actionMatch = filterAction === 'all' || (filterAction === 'open' ? item.action.includes('Mở') : item.action.includes('Đóng'));
+    const actionMatch = filterAction === 'all' || (filterAction === 'open' ? item.action.includes('Mở') : item.action.includes('Khoá'));
     
     // Convert filter date from yyyy-mm-dd to dd/mm/yyyy for comparison
     const dateFilterFormatted = filterDate ? 
@@ -93,7 +93,7 @@ const History = () => {
           >
             <option value="all">Tất cả</option>
             <option value="open">Mở cửa</option>
-            <option value="close">Đóng cửa</option>
+            <option value="close">Khoá cửa</option>
           </Form.Select>
         </Form.Group>
 
