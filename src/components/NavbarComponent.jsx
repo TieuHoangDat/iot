@@ -9,7 +9,7 @@ const NavbarComponent = () => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
           <Nav.Link href="/home">Trang chủ</Nav.Link>
-          <Nav.Link href="/diagram">Biểu đồ</Nav.Link>
+          <Nav.Link href="/map">Bản đồ</Nav.Link>
           <Nav.Link href="/introduce">Giới thiệu</Nav.Link>
         </Nav>
         <Form className="d-flex">

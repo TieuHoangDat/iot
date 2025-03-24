@@ -6,10 +6,12 @@ const Introduce = () => {
     <div className="row">
         {/* Introduce */}
         <h2>Đề tài</h2>
-        <p>Đóng mở cửa bằng giọng nói và nhận diện khuôn mặt</p>
+        <p>Thiết bị đo và hiển thị nồng độ bụi mịn </p>
         <h2>Thành viên</h2>
-        <p>Lê Đình Dương - B21DCCN281</p>
         <p>Tiêu Hoàng Đạt - B21DCCN220</p>
+        <p>Đinh Văn Toàn - B21DCCN712</p>
+        <p>Nguyễn Quang Huy - B21DCCN435</p>
+        <p>Lê Đăng Hải Anh - B21DCCN147</p>
     </div>
   );
 };
