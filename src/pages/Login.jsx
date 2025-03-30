@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import { database, ref, onValue } from '../firebase'; // Import Firebase
+import 'bootstrap/dist/css/bootstrap.min.css';
 import background from '../assets/background.png'; // Import ảnh nền
 
 function Login() {
@@ -11,13 +12,26 @@ function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (username === 'dat' && password === '123') {
-      setMessage('Đăng nhập thành công!');
-      localStorage.setItem('username', username);
-      navigate('/home');
-    } else {
-      setMessage('Tên đăng nhập hoặc mật khẩu không chính xác');
-    }
+
+    const usersRef = ref(database, 'users');
+    
+    onValue(usersRef, (snapshot) => {
+      const users = snapshot.val();
+      let isAuthenticated = false;
+
+      // Kiểm tra từng user trong database
+      Object.values(users).forEach((user) => {
+        if (user.username === username && user.password === password) {
+          isAuthenticated = true;
+          localStorage.setItem('username', username);
+          navigate('/home');
+        }
+      });
+
+      if (!isAuthenticated) {
+        setMessage('Tên đăng nhập hoặc mật khẩu không chính xác');
+      }
+    }, { onlyOnce: true }); // Chỉ đọc dữ liệu 1 lần
   };
 
   return (
@@ -55,7 +69,7 @@ function Login() {
               Đăng nhập
             </button>
           </form>
-          {message && <div className="alert alert-info mt-3 text-center">{message}</div>}
+          {message && <div className="alert alert-danger mt-3 text-center">{message}</div>}
         </div>
       </div>
     </div>

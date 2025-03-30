@@ -1,50 +1,80 @@
 import React, { useState, useEffect } from "react";
+import { getDatabase, ref, onValue } from "firebase/database";
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { database } from "../firebase"; // Import Firebase đã cấu hình
 
-const provinces = ["Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Cần Thơ", "Hải Phòng", "Nha Trang"];
-
-// Giả lập dữ liệu nồng độ bụi mịn theo từng giây
-const generateLiveData = () => {
-  return Array.from({ length: 10 }, (_, i) => ({
-    time: `${i}s`,
-    pm25: Math.floor(Math.random() * 100) + 20, // Giá trị ngẫu nhiên từ 20 - 120
-  }));
+const provinces = {
+  "Hà Nội": "ha_noi",
+  "Hồ Chí Minh": "ho_chi_minh",
+  "Đà Nẵng": "da_nang",
+  "Cần Thơ": "can_tho",
+  "Hải Phòng": "hai_phong",
+  "Nha Trang": "nha_trang",
 };
 
-// Dữ liệu nồng độ bụi theo tuần
-const weeklyData = [
-  { day: "T2", pm25: 75 },
-  { day: "T3", pm25: 68 },
-  { day: "T4", pm25: 80 },
-  { day: "T5", pm25: 72 },
-  { day: "T6", pm25: 85 },
-  { day: "T7", pm25: 90 },
-  { day: "CN", pm25: 95 },
-];
-
 const RightSection = () => {
-  const [selectedProvince, setSelectedProvince] = useState(provinces[0]);
-  const [liveData, setLiveData] = useState(generateLiveData());
+  const [selectedProvince, setSelectedProvince] = useState("Hà Nội");
+  const [liveData, setLiveData] = useState([]);
+  const [weeklyData, setWeeklyData] = useState([]);
 
-  // Cập nhật dữ liệu bụi mịn mỗi giây
   useEffect(() => {
+    const dbRef = ref(database, "/");
+    let currentPM25 = 50;
+
+    const unsubscribe = onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data && data[selectedProvince]) {
+        currentPM25 = data[selectedProvince];
+      }
+    });
+
     const interval = setInterval(() => {
-      setLiveData((prevData) => [
-        ...prevData.slice(1), // Loại bỏ điểm đầu tiên để giữ độ dài cố định
-        { time: `${prevData.length}s`, pm25: Math.floor(Math.random() * 100) + 20 },
-      ]);
+      setLiveData((prevData) => {
+        const newData = [
+          ...prevData.slice(-9),
+          { time: prevData.length, pm25: currentPM25 },
+        ];
+
+        return newData.map((item, index) => ({
+          ...item,
+          time: `${index - 9}s`,
+        }));
+      });
     }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+
+    return () => {
+      clearInterval(interval);
+      unsubscribe();
+    };
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    const dbRef = ref(database, "measurementsByDate");
+  
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+  
+      const selectedKey = provinces[selectedProvince];
+      const transformedData = Object.entries(data)
+        .slice(-7) // Lấy 7 ngày gần nhất
+        .map(([date, values]) => ({
+          day: date, // Giữ nguyên định dạng ngày tháng từ Firebase
+          pm25: values[selectedKey] || 0,
+        }));
+  
+      setWeeklyData(transformedData);
+    });
+  }, [selectedProvince]);
+  
 
   return (
     <div className="container">
-
-      {/* Select box chọn tỉnh thành */}
+      {/* Chọn tỉnh thành */}
       <div className="mb-4 text-center">
         <label className="fw-bold me-2">Chọn tỉnh thành:</label>
         <select className="form-select w-auto d-inline-block" value={selectedProvince} onChange={(e) => setSelectedProvince(e.target.value)}>
-          {provinces.map((province, index) => (
+          {Object.keys(provinces).map((province, index) => (
             <option key={index} value={province}>
               {province}
             </option>
@@ -55,7 +85,7 @@ const RightSection = () => {
       {/* Biểu đồ đường - Bụi mịn theo giây */}
       <div className="mb-4 bg-light p-3 rounded shadow">
         <h4 className="text-center text-secondary">Nồng độ bụi theo từng giây</h4>
-        <ResponsiveContainer width="100%" height={200}>
+        <ResponsiveContainer width="100%" height={220}>
           <LineChart data={liveData} margin={{ top: 10, right: 30, left: 0, bottom: 10 }}>
             <XAxis dataKey="time" tick={{ fontSize: 12 }} />
             <YAxis />
@@ -66,9 +96,9 @@ const RightSection = () => {
         </ResponsiveContainer>
       </div>
 
-      {/* Biểu đồ cột - Nồng độ bụi mịn trong tuần */}
+      {/* Biểu đồ cột - Bụi mịn 7 ngày gần nhất */}
       <div className="bg-light p-3 rounded shadow">
-        <h4 className="text-center text-secondary">Nồng độ bụi trong tuần</h4>
+        <h4 className="text-center text-secondary">Nồng độ bụi 7 ngày gần nhất</h4>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={weeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
             <XAxis dataKey="day" tick={{ fontSize: 12 }} />

@@ -4,14 +4,14 @@ import { getDatabase, ref, onValue, set } from "firebase/database";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyANnDxikLdbDLygzVgOle_AYY3PLzmPgA8",
-  authDomain: "bt-iot-7af8a.firebaseapp.com",
-  databaseURL: "https://bt-iot-7af8a-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "bt-iot-7af8a",
-  storageBucket: "bt-iot-7af8a.appspot.com",
-  messagingSenderId: "121771695080",
-  appId: "1:121771695080:web:f846c6d46def80cd00225d",
-  measurementId: "G-0MHC1VME9H"
+  apiKey: "AIzaSyCfZiuCDI0YsB-Y646DhnnVkCoSAZ0G-80",
+  authDomain: "data-nhung.firebaseapp.com",
+  databaseURL: "https://data-nhung-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "data-nhung",
+  storageBucket: "data-nhung.firebasestorage.app",
+  messagingSenderId: "1015170892104",
+  appId: "1:1015170892104:web:39432a17dc594511a8f37d",
+  measurementId: "G-57W6VDLZNR"
 };
 
 // Initialize Firebase

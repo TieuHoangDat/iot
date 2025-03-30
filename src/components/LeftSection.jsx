@@ -1,16 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getDatabase, ref, onValue } from "firebase/database";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
-
-const airQualityData = [
-  { city: "Hà Nội", pm25: 75 },
-  { city: "Hồ Chí Minh", pm25: 65 },
-  { city: "Đà Nẵng", pm25: 50 },
-  { city: "Cần Thơ", pm25: 45 },
-  { city: "Hải Phòng", pm25: 60 },
-  { city: "Nha Trang", pm25: 40 },
-];
+import { database } from "../firebase"; // Import Firebase đã cấu hình
 
 const LeftSection = () => {
+  const [airQualityData, setAirQualityData] = useState([]);
+
+  useEffect(() => {
+    const dbRef = ref(database, "/"); // Đọc toàn bộ dữ liệu từ gốc database
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const selectedCities = ["Cần Thơ", "Đà Nẵng", "Hà Nội", "Hải Phòng", "Hồ Chí Minh", "Nha Trang"];
+        const formattedData = selectedCities.map((city) => ({
+          city,
+          pm25: data[city] || 0, // Nếu không có dữ liệu, trả về 0
+        }));
+        setAirQualityData(formattedData);
+      }
+    });
+  }, []);
+
   return (
     <div className="container p-4">
       <h2 className="text-primary text-center mb-4">Nồng độ bụi mịn PM2.5</h2>
@@ -22,7 +32,7 @@ const LeftSection = () => {
             <div className="card shadow-sm">
               <div className="card-body text-center">
                 <h5 className="card-title">{data.city}</h5>
-                <p className={`card-text fw-bold ${data.pm25 > 50 ? "text-danger" : "text-success"}`}>
+                <p className={`card-text fw-bold ${data.pm25 > 100 ? "text-danger" : "text-success"}`}>
                   {data.pm25} µg/m³
                 </p>
               </div>
@@ -41,14 +51,13 @@ const LeftSection = () => {
                 dataKey="city" 
                 tick={{ fontSize: 10 }} 
                 tickMargin={10} 
-                // angle={-30}  // Xoay chữ để tránh trùng
                 textAnchor="end" 
-                interval={0} // Hiển thị tất cả tên tỉnh
+                interval={0} 
               />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="pm25" fill="#007bff" name="" />
+              <Bar dataKey="pm25" fill="#007bff" name="PM2.5" />
             </BarChart>
           </ResponsiveContainer>
         </div>
