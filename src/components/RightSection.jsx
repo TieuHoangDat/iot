@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { getDatabase, ref, onValue } from "firebase/database";
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { ref, onValue } from "firebase/database";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} from "recharts";
 import { database } from "../firebase"; // Import Firebase đã cấu hình
 
+// Mapping key Firebase → tên hiển thị
 const provinces = {
   "Hà Nội": "ha_noi",
   "Hồ Chí Minh": "ho_chi_minh",
@@ -23,8 +34,9 @@ const RightSection = () => {
 
     const unsubscribe = onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
-      if (data && data[selectedProvince]) {
-        currentPM25 = data[selectedProvince];
+      const selectedKey = provinces[selectedProvince]; // chuyển sang key Firebase
+      if (data && data[selectedKey]) {
+        currentPM25 = data[selectedKey];
       }
     });
 
@@ -50,30 +62,34 @@ const RightSection = () => {
 
   useEffect(() => {
     const dbRef = ref(database, "measurementsByDate");
-  
+
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
-  
-      const selectedKey = provinces[selectedProvince];
+
+      const selectedKey = provinces[selectedProvince]; // chuyển sang key Firebase
+
       const transformedData = Object.entries(data)
         .slice(-7) // Lấy 7 ngày gần nhất
         .map(([date, values]) => ({
-          day: date, // Giữ nguyên định dạng ngày tháng từ Firebase
+          day: date,
           pm25: values[selectedKey] || 0,
         }));
-  
+
       setWeeklyData(transformedData);
     });
   }, [selectedProvince]);
-  
 
   return (
     <div className="container">
       {/* Chọn tỉnh thành */}
       <div className="mb-4 text-center">
         <label className="fw-bold me-2">Chọn tỉnh thành:</label>
-        <select className="form-select w-auto d-inline-block" value={selectedProvince} onChange={(e) => setSelectedProvince(e.target.value)}>
+        <select
+          className="form-select w-auto d-inline-block"
+          value={selectedProvince}
+          onChange={(e) => setSelectedProvince(e.target.value)}
+        >
           {Object.keys(provinces).map((province, index) => (
             <option key={index} value={province}>
               {province}
@@ -86,12 +102,21 @@ const RightSection = () => {
       <div className="mb-4 bg-light p-3 rounded shadow">
         <h4 className="text-center text-secondary">Nồng độ bụi theo từng giây</h4>
         <ResponsiveContainer width="100%" height={220}>
-          <LineChart data={liveData} margin={{ top: 10, right: 30, left: 0, bottom: 10 }}>
+          <LineChart
+            data={liveData}
+            margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
+          >
             <XAxis dataKey="time" tick={{ fontSize: 12 }} />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="pm25" stroke="#ff5733" strokeWidth={2} name="PM2.5 (µg/m³)" />
+            <Line
+              type="monotone"
+              dataKey="pm25"
+              stroke="#ff5733"
+              strokeWidth={2}
+              name="PM2.5 (µg/m³)"
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -100,12 +125,19 @@ const RightSection = () => {
       <div className="bg-light p-3 rounded shadow">
         <h4 className="text-center text-secondary">Nồng độ bụi 7 ngày gần nhất</h4>
         <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={weeklyData} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
+          <BarChart
+            data={weeklyData}
+            margin={{ top: 10, right: 30, left: 0, bottom: 20 }}
+          >
             <XAxis dataKey="day" tick={{ fontSize: 12 }} />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="pm25" fill="#007bff" name="PM2.5 (µg/m³)" />
+            <Bar
+              dataKey="pm25"
+              fill="#007bff"
+              name="PM2.5 (µg/m³)"
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { ref, onValue } from "firebase/database";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { database } from "../firebase"; // Import Firebase đã cấu hình
 
@@ -11,11 +11,22 @@ const LeftSection = () => {
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const selectedCities = ["Cần Thơ", "Đà Nẵng", "Hà Nội", "Hải Phòng", "Hồ Chí Minh", "Nha Trang"];
+        // Danh sách key (Firebase) và tên hiển thị (giao diện)
+        const selectedCities = [
+          { key: "can_tho", label: "Cần Thơ" },
+          { key: "da_nang", label: "Đà Nẵng" },
+          { key: "ha_noi", label: "Hà Nội" },
+          { key: "hai_phong", label: "Hải Phòng" },
+          { key: "ho_chi_minh", label: "Hồ Chí Minh" },
+          { key: "nha_trang", label: "Nha Trang" },
+        ];
+
+        // Chuyển đổi dữ liệu từ Firebase sang định dạng cần hiển thị
         const formattedData = selectedCities.map((city) => ({
-          city,
-          pm25: data[city] || 0, // Nếu không có dữ liệu, trả về 0
+          city: city.label,
+          pm25: data[city.key] || 0, // Nếu không có dữ liệu, gán 0
         }));
+
         setAirQualityData(formattedData);
       }
     });
@@ -47,12 +58,12 @@ const LeftSection = () => {
         <div className="bg-light p-3 rounded shadow">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={airQualityData} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
-              <XAxis 
-                dataKey="city" 
-                tick={{ fontSize: 10 }} 
-                tickMargin={10} 
-                textAnchor="end" 
-                interval={0} 
+              <XAxis
+                dataKey="city"
+                tick={{ fontSize: 10 }}
+                tickMargin={10}
+                textAnchor="end"
+                interval={0}
               />
               <YAxis />
               <Tooltip />
