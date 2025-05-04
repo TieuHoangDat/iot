@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { database, ref, onValue } from '../firebase'; // Đường dẫn tùy dự án
+import { database, ref, onValue } from '../firebase';
 
 const DataCard = ({ city }) => {
   const [pm25, setPm25] = useState(null);
@@ -8,16 +8,15 @@ const DataCard = ({ city }) => {
   useEffect(() => {
     if (!city) return;
 
-    const cityRef = ref(database, '/'); // Gốc DB
-    setLoading(true);
+    const cityKey = normalizeCityName(city);
+    const cityRef = ref(database, cityKey);
 
+    setLoading(true);
     onValue(
       cityRef,
       (snapshot) => {
-        const data = snapshot.val();
-        const cityValue = data?.[city];
-
-        setPm25(typeof cityValue === 'number' ? cityValue : null);
+        const value = snapshot.val();
+        setPm25(typeof value === 'number' ? value : null);
         setLoading(false);
       },
       { onlyOnce: true }
@@ -51,16 +50,23 @@ const DataCard = ({ city }) => {
       )}
     </div>
   );
-  
 };
 
+function normalizeCityName(name) {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, '_');
+}
+
 function getPm25Color(pm) {
-    if (pm <= 50) return '#4CAF50';      // Tốt – xanh lá
-    if (pm <= 100) return '#FFC107';     // Trung bình – vàng
-    if (pm <= 150) return '#FF9800';     // Kém – cam
-    if (pm <= 200) return '#F44336';     // Xấu – đỏ
-    if (pm <= 300) return '#9C27B0';     // Rất xấu – tím
-    return '#795548';                    // Nguy hại – nâu
-  }
+  if (pm <= 50) return '#4CAF50';
+  if (pm <= 100) return '#FFC107';
+  if (pm <= 150) return '#FF9800';
+  if (pm <= 200) return '#F44336';
+  if (pm <= 300) return '#9C27B0';
+  return '#795548';
+}
 
 export default DataCard;
