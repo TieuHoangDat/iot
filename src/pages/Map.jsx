@@ -1,52 +1,53 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import DataCard from '../components/DataCard.jsx'; // Dùng đường dẫn tương đối
+import ReactDOM from 'react-dom';
+
+// Toạ độ cho các thành phố
+const cities = [
+  { name: 'Hà Nội', position: [21.0285, 105.8542] },
+  { name: 'Hồ Chí Minh', position: [10.7626, 106.6602] },
+  { name: 'Đà Nẵng', position: [16.0471, 108.2062] },
+  { name: 'Cần Thơ', position: [10.0452, 105.7469] },
+  { name: 'Hải Phòng', position: [20.8449, 106.6881] },
+  { name: 'Nha Trang', position: [12.2388, 109.1967] }
+];
 
 const Map = () => {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
-  
-  // Example position (Hanoi coordinates)
-  const position = [21.0285, 105.8542];
-  
-  // You can add your device positions here
-  const devices = [
-    { id: 1, name: "Device 1", position: [21.0285, 105.8542], status: "active" },
-    { id: 2, name: "Device 2", position: [21.0278, 105.8605], status: "inactive" }
-  ];
+  const [selectedCity, setSelectedCity] = useState(null);
 
   useEffect(() => {
-    // Fix for the default marker icon issue
     delete L.Icon.Default.prototype._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
       iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
       shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
     });
-    
-    // Initialize map if it doesn't exist
+
     if (!mapInstance.current) {
-      mapInstance.current = L.map(mapRef.current).setView(position, 13);
-      
-      // Add OpenStreetMap tile layer
+      mapInstance.current = L.map(mapRef.current).setView([16.0471, 108.2068], 6); // Trung tâm Việt Nam
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '&copy; OpenStreetMap contributors'
       }).addTo(mapInstance.current);
+
+      cities.forEach(city => {
+        const marker = L.marker(city.position).addTo(mapInstance.current);
       
-      // Add markers for devices
-      devices.forEach(device => {
-        const marker = L.marker(device.position).addTo(mapInstance.current);
-        marker.bindPopup(`
-          <div>
-            <h4>${device.name}</h4>
-            <p>Trạng thái: ${device.status === "active" ? "Hoạt động" : "Không hoạt động"}</p>
-            <p>Vị trí: ${device.position[0]}, ${device.position[1]}</p>
-          </div>
-        `);
+        const popupContainer = document.createElement('div');
+      
+        // Dùng React để render DataCard vào popupContainer
+        const root = ReactDOM.createRoot(popupContainer);
+        root.render(<DataCard city={city.name} />);
+      
+        marker.bindPopup(popupContainer);
       });
+      
     }
-    
-    // Cleanup function
+
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -55,7 +56,6 @@ const Map = () => {
     };
   }, []);
 
-  // Map styles
   const mapStyle = {
     width: '100%',
     height: '600px',
@@ -65,10 +65,16 @@ const Map = () => {
   };
 
   return (
-    <div className="row">
+    <div>
       <h2>Bản đồ thiết bị</h2>
-      <p>Xem vị trí của tất cả thiết bị IoT được đăng ký trong hệ thống.</p>
       <div ref={mapRef} style={mapStyle}></div>
+
+      {/* Hiển thị DataCard khi có thành phố được chọn */}
+      {selectedCity && (
+        <div style={{ marginTop: '20px' }}>
+          <DataCard city={selectedCity} />
+        </div>
+      )}
     </div>
   );
 };
