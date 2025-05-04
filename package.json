@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "iot",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -11,7 +11,10 @@
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.5",
-    "firebase": "^10.14.1",
+    "firebase": "^11.5.0",
+    "iot": "file:",
+    "leaflet": "^1.9.4",
+    "my-app": "file:",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
     "react-chartjs-2": "^5.2.0",
@@ -19,7 +22,7 @@
     "react-dom": "^18.3.1",
     "react-icons": "^5.4.0",
     "react-router-dom": "^6.27.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^3.0.1",
     "recharts": "^2.15.1",
     "web-vitals": "^2.1.4"
   },
@@ -46,5 +49,17 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TieuHoangDat/iot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TieuHoangDat/iot/issues"
+  },
+  "homepage": "https://github.com/TieuHoangDat/iot#readme"
 }
